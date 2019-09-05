@@ -40,7 +40,7 @@
             colorRect(0, 0, canvas.width, canvas.height, 'black');
 
             colorRect(playerXpos, playerYpos, playerSize, playerSize, 'pink');
-            
+
             playerMove();
         }
 
@@ -70,6 +70,12 @@
             }
             if (leftKeyPressed) {
                 playerXpos -= playerXspeed; //X move left
+            }
+            if (playerXpos > canvas.width - playerSize) { // right bounce
+                playerXspeed *= -1;
+            }
+            if (playerXpos < 0) { // left bounce
+                playerXspeed *= -1;
             }
 
         }

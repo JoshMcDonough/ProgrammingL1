@@ -13,6 +13,10 @@
             canvas = document.getElementById('gameCanvas');
             canvasContext = canvas.getContext('2d');
 
+            document.addEventListener('keydown', keyPressed)
+            document.addEventListener('keyup', keyReleased)
+
+
 
             setInterval(mainloop, 1000 / 50);
         }
@@ -24,12 +28,50 @@
         var playerYspeed = 5;
         var playerSize = 30;
 
+        //Moving Vars
+        const LEFT_KEY = 37;
+        const RIGHT_KEY = 39;
+        var leftKeyPressed = false;
+        var rightKeyPressed = false;
+
 
 
         function mainloop() {
             colorRect(0, 0, canvas.width, canvas.height, 'black');
 
             colorRect(playerXpos, playerYpos, playerSize, playerSize, 'pink');
+            
+            playerMove();
+        }
+
+        function keyPressed(evt) {
+            console.log(evt.keyCode);
+            if (evt.keyCode == LEFT_KEY) {
+                leftKeyPressed = true;
+            }
+            if (evt.keyCode == RIGHT_KEY) {
+                rightKeyPressed = true;
+            }
+        }
+
+        function keyReleased(evt) {
+            if (leftKeyPressedkey == LEFT_KEY) {
+                leftKeyPressed = false;
+            }
+            if (rightKeyPressed == RIGHT_KEY) {
+                rightKeyPressed = false;
+            }
+
+        }
+
+        function playerMove() {
+            if (rightKeyPressed) {
+                playerXpos += playerXspeed; //X move right
+            }
+            if (leftKeyPressed) {
+                playerXpos -= playerXspeed; //X move left
+            }
+
         }
 
         function colorRect(x, y, w, h, c) {

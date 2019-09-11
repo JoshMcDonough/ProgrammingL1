@@ -31,8 +31,13 @@
         //Moving Vars
         const LEFT_KEY = 37;
         const RIGHT_KEY = 39;
+        const UP_KEY = 38;
+        const DOWN_KEY = 40;
         var leftKeyPressed = false;
         var rightKeyPressed = false;
+        var upKeyPressed = false;
+        var downKeyPressed = false;
+
 
 
 
@@ -52,16 +57,27 @@
             if (evt.keyCode == RIGHT_KEY) {
                 rightKeyPressed = true;
             }
+            if (evt.keyCode == UP_KEY) {
+                upKeyPressed = true;
+            }
+            if (evt.keyCode == DOWN_KEY) {
+                downKeyPressed = true;
+            }
         }
 
         function keyReleased(evt) {
-            if (leftKeyPressedkey == LEFT_KEY) {
+            if (evt.keyCode == LEFT_KEY) {
                 leftKeyPressed = false;
             }
-            if (rightKeyPressed == RIGHT_KEY) {
+            if (evt.keyCode == RIGHT_KEY) {
                 rightKeyPressed = false;
             }
-
+            if (evt.keyCode == UP_KEY) {
+                upKeyPressed = false;
+            }
+            if (evt.keyCode == DOWN_KEY) {
+                downKeyPressed = false;
+            }
         }
 
         function playerMove() {
@@ -71,19 +87,28 @@
             if (leftKeyPressed) {
                 playerXpos -= playerXspeed; //X move left
             }
-            if (playerXpos > canvas.width - playerSize) { // right bounce
-                playerXspeed *= -1;
+            if (upKeyPressed) {
+                playerYpos -= playerYspeed; //y move up
             }
-            if (playerXpos < 0) { // left bounce
-                playerXspeed *= -1;
+            if (downKeyPressed) {
+                playerYpos += playerYspeed; //y move down
             }
 
+            function playerMove() {
+                if (rightKeyPressed) {
+                    playerXpos += playerXspeed; //X move right
+                }
+                if (leftKeyPressed) {
+                    playerXpos -= playerXspeed; //X move left
+                }
+            }
         }
 
-        function colorRect(x, y, w, h, c) {
-            canvasContext.fillStyle = c;
-            canvasContext.fillRect(x, y, w, h); //background
-        }
+            function colorRect(x, y, w, h, c) {
+                canvasContext.fillStyle = c;
+                canvasContext.fillRect(x, y, w, h); //background
+            }
+        
 
     </script>
 </body>

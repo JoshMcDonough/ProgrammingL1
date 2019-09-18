@@ -1,7 +1,7 @@
 <!doctype html>
 
 <head>
-
+    <title>Frogger The Game</title>
 </head>
 
 <body>
@@ -24,9 +24,15 @@
         //Player Vars
         var playerXpos = 0;
         var playerYpos = 0;
-        var playerXspeed = 5;
-        var playerYspeed = 5;
+        var playerXspeed = 3;
+        var playerYspeed = 3;
         var playerSize = 30;
+
+        //Car Vars
+        var carXpos = 0;
+        var carYpos = 0;
+        var carXspeed = 0;
+        var carSize = 0;
 
         //Moving Vars
         const LEFT_KEY = 37;
@@ -81,34 +87,25 @@
         }
 
         function playerMove() {
-            if (rightKeyPressed) {
+            if (rightKeyPressed && playerXpos < canvas.width - playerSize) {
                 playerXpos += playerXspeed; //X move right
             }
-            if (leftKeyPressed) {
+            if (leftKeyPressed && playerXpos > 0) {
                 playerXpos -= playerXspeed; //X move left
             }
-            if (upKeyPressed) {
+            if (upKeyPressed && playerYpos > 0) {
                 playerYpos -= playerYspeed; //y move up
             }
-            if (downKeyPressed) {
+            if (downKeyPressed && playerYpos < canvas.height - playerSize) {
                 playerYpos += playerYspeed; //y move down
             }
 
-            function playerMove() {
-                if (rightKeyPressed) {
-                    playerXpos += playerXspeed; //X move right
-                }
-                if (leftKeyPressed) {
-                    playerXpos -= playerXspeed; //X move left
-                }
-            }
         }
 
-            function colorRect(x, y, w, h, c) {
-                canvasContext.fillStyle = c;
-                canvasContext.fillRect(x, y, w, h); //background
-            }
-        
+        function colorRect(x, y, w, h, c) {
+            canvasContext.fillStyle = c;
+            canvasContext.fillRect(x, y, w, h); //background
+        }
 
     </script>
 </body>

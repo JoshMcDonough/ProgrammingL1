@@ -29,10 +29,11 @@
         var playerSize = 30;
 
         //Car Vars
-        var carXpos = 0;
-        var carYpos = 0;
-        var carXspeed = 0;
-        var carSize = 0;
+        var carXpos = 50;
+        var carYpos = 50;
+        var carXspeed = 2;
+        var carYspeed = 0;
+        var carSize = 40;
 
         //Moving Vars
         const LEFT_KEY = 37;
@@ -52,11 +53,22 @@
 
             colorRect(playerXpos, playerYpos, playerSize, playerSize, 'pink');
 
+            colorRect(carXpos, carYpos, carSize, carSize, 'orange');
+            
+            //if (startingPos) {
+                //startingPos();
+               // startingpos = false;
+          //  }
+
             playerMove();
+        }
+        
+        function startingPos(){
+            playerXpos = ((canvas.width / 2) - (playerSize / 2));
+            playerYpos = (canvas.height - playerSize * 2)
         }
 
         function keyPressed(evt) {
-            console.log(evt.keyCode);
             if (evt.keyCode == LEFT_KEY) {
                 leftKeyPressed = true;
             }
@@ -101,6 +113,7 @@
             }
 
         }
+        
 
         function colorRect(x, y, w, h, c) {
             canvasContext.fillStyle = c;

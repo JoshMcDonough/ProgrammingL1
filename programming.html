@@ -28,9 +28,11 @@
         var playerYspeed = 3;
         var playerSize = 30;
 
+        var userName = ' ';
+
         //Car Vars
-        var carXpos = 50;
-        var carYpos = 50;
+        var carXpos = 0;
+        var carYpos = 80;
         var carXspeed = 2;
         var carYspeed = 0;
         var carSize = 40;
@@ -45,6 +47,16 @@
         var upKeyPressed = false;
         var downKeyPressed = false;
 
+        var startingPos = true;
+        var difficulty = prompt('What difficulty do you want?', 'easy or hard');
+        var pass = false;
+
+        if (difficulty != 'easy' || difficulty != 'hard') {
+            while(pass == false) {
+                difficulty = prompt('What difficulty do you want?', 'easy or hard');
+            }
+        }
+
 
 
 
@@ -54,22 +66,34 @@
             colorRect(playerXpos, playerYpos, playerSize, playerSize, 'pink');
 
             colorRect(carXpos, carYpos, carSize, carSize, 'orange');
-            
-            //if (startingPos) {
-                //startingPos();
-               // startingpos = false;
-          //  }
 
             playerMove();
+            carMove();
+
+
+            if (startingPos) {
+                startPos();
+                startingPos = false;
+            }
+
         }
-        
-        function startingPos(){
+
+        function startPos() {
             playerXpos = ((canvas.width / 2) - (playerSize / 2));
-            playerYpos = (canvas.height - playerSize * 2)
+            playerYpos = (canvas.height - playerSize * 2);
+            //Starting Position
         }
-        
-        function carMove(){
-            
+
+        function carMove() {
+            //function (brick, index, array){
+            carXpos += carXspeed;
+            //Collision Mechanics
+            if (playerXpos + playerSize > carXpos && playerXpos < carXpos + carSize && playerYpos + playerSize > carYpos && playerYpos < carYpos + carSize) {
+                console.log('hit');
+                playerXpos = ((canvas.width / 2) - (playerSize / 2));
+                playerYpos = (canvas.height - playerSize * 2);
+            }
+            //}
         }
 
         function keyPressed(evt) {
@@ -117,7 +141,7 @@
             }
 
         }
-        
+
 
         function colorRect(x, y, w, h, c) {
             canvasContext.fillStyle = c;

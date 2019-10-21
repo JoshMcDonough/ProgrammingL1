@@ -48,50 +48,39 @@
         var rightKeyPressed = false;
         var upKeyPressed = false;
         var downKeyPressed = false;
-        
-        function makeCar(){
-            const CAR_SIZE = 40;
-            var carXpos = canvas.width;
-            var carYpos = 0 - CAR_SIZE;
-            var carXspeed = 5;
-            var carYspeed = 5;
-        }
-        
-        
-        
-        
-        
+        //Use the arrow keys to move the player
 
         var startingPos = true;
-        var difficulty = prompt('What difficulty do you want?', 'easy or hard');
-        var pass = false;
+        //var difficulty = prompt('What difficulty do you want?', 'easy or hard');
+        //var pass = false;
 
-        if (difficulty != 'easy' || difficulty != 'hard') {
-            while (pass == false) {
-                difficulty = prompt('What difficulty do you want?', 'easy or hard');
+        // if (difficulty != 'easy' || difficulty != 'hard') {
+        //    while (pass == false) {
+        //  difficulty = prompt('What difficulty do you want?', 'easy or hard');
 
-                if (difficulty == 'easy' || difficulty == 'hard') {
-                    pass = true;
-                }
-            }
-
-
-            if (difficulty == easy) {
-                carXspeed = 5;
-            } else {
-                carXspeed = 20;
-            }
-        }
+        //  if (difficulty == 'easy' || difficulty == 'hard') {
+        // pass = true;
+        //  }
+        //   }
+        // }
 
 
+        //if (difficulty == easy) {
+        //  carXspeed = 5;
+        //} else {
+        //  carXspeed = 20;
+        //    }
+        //    }
 
-        if (pass == true) {
-            if (difficulty == easy) {
-                carXspeed = 5;
-            } else {
-                carXspeed = 20;
-            }
-        }
+
+
+        //if (pass == true) {
+        //  if (difficulty == easy) {
+        //      carXspeed = 5;
+        //  } else {
+        //      carXspeed = 20;
+        //  }
+        //  }
 
 
 
@@ -100,11 +89,14 @@
 
             colorRect(playerXpos, playerYpos, playerSize, playerSize, 'pink');
 
-            // colorRect(carXpos, carYpos, carSize, carSize, 'orange');
-
+            // colorRect(carXpos, carYpos, CAR_SIZE, CAR_SIZE, 'orange');
+            if (startingPos) {
+                startPos();
+                startingPos = false;
+            }
             playerMove();
             carMove();
-
+            carDraw();
 
             if (startingPos) {
                 startPos();
@@ -113,15 +105,11 @@
 
         }
 
-        function carDraw() {
-            bricks.forEach(function(brick, index, array) {
-                colorRect(carXpos, carYpos, carSize, carSize, 'orange');
-            });
+
+
+        function startGame() {
+
         }
-        
-    function startGame(){
-        
-    }
 
         function startPos() {
             playerXpos = ((canvas.width / 2) - (playerSize / 2));
@@ -130,15 +118,41 @@
         }
 
         function carMove() {
-            //function (function(brick, index, array){
-            carXpos += carXspeed;
-            //Collision Mechanics
-            if (playerXpos + playerSize > carXpos && playerXpos < carXpos + carSize && playerYpos + playerSize > carYpos && playerYpos < carYpos + carSize) {
-                console.log('hit');
-                playerXpos = ((canvas.width / 2) - (playerSize / 2));
-                playerYpos = (canvas.height - playerSize * 2);
+            car.forEach(function(car) {
+                //function (function(brick, index, array){
+                car.carXpos += car.carXspeed;
+                //Collision Mechanics
+                if (playerXpos + playerSize > car.carXpos && playerXpos < car.carXpos + car.CAR_SIZE && playerYpos + playerSize > car.carYpos && playerYpos < car.carYpos + car.CAR_SIZE) {
+                    console.log('hit');
+                    playerXpos = ((canvas.width / 2) - (playerSize / 2));
+                    playerYpos = (canvas.height - playerSize * 2);
+                }
+            });
+        }
+
+        function makeCar() {
+            const CAR_SIZE = 40;
+            var carXpos = canvas.width;
+            var carYpos = 0 - CAR_SIZE;
+            var carXspeed = Math.floor(Math.random() * (4 - 2) + 2);
+            var carYspeed = 0;
+
+            var car = {
+                carXpos: carXpos,
+                carYpos: carYpos,
+                CAR_SIZE: CAR_SIZE,
+                carXspeed: carXspeed,
+                carYspeed: carYspeed
             }
-        } //);
+
+            car.push(car);
+        }
+
+        function carDraw() {
+            car.forEach(function(car, index, array) {
+                colorRect(car.carXpos, car.carYpos, car.CAR_SIZE, car.CAR_SIZE, 'orange');
+            });
+        }
 
 
         function keyPressed(evt) {
@@ -192,8 +206,6 @@
             canvasContext.fillStyle = c;
             canvasContext.fillRect(x, y, w, h); //background
         }
-        
-        
 
     </script>
 </body>

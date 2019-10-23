@@ -88,6 +88,9 @@
 
              function carMove() {
                  cars.forEach(function(car) {
+                     
+                     var carPos = Math.floor(Math.random() * 3) + 1;
+                     car.carYpos = carPos * (canvas.height / 3);
 
                      car.carXpos += car.carXspeed;
                      //Collision Mechanics
@@ -174,17 +177,7 @@
                      colorRect(car.carXpos, car.carYpos, car.CAR_SIZE, car.CAR_SIZE, 'orange');
                  });
 
-
-
              }
-
-
-
-
-
-
-
-
 
              function colorRect(x, y, w, h, c) {
                  canvasContext.fillStyle = c;
@@ -194,3 +187,4 @@
 
      </script>
  </body>
+//18:27 on video

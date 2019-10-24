@@ -1,190 +1,195 @@
- <!doctype html>
+<!doctype html>
 
- <head>
-     <title>Frogger The Game</title>
- </head>
+<head>
+    <title>Frogger The Game</title>
+</head>
 
- <body>
-     <canvas id="gameCanvas" width="400" height="400"></canvas>
-     <script>
-         var canvas, canvasContext;
-         window.onload = function() {
-             canvas = document.getElementById('gameCanvas');
-             canvasContext = canvas.getContext('2d');
-             document.addEventListener('keydown', keyPressed)
-             document.addEventListener('keyup', keyReleased)
-             setInterval(mainloop, 1000 / 50);
-         }
-         //Player Vars
-         var playerXpos = 0;
-         var playerYpos = 0;
-         var playerXspeed = 3;
-         var playerYspeed = 3;
-         var playerXspeed = 5;
-         var playerYspeed = 5;
-         const PLAYER_SIZE = 30;
-         var userName = ' ';
-         //var userName = ' ';
-         //Car Vars
-         var carXpos = 0;
-         var carYpos = 80;
-         var carXspeed = 2;
-         var carYspeed = 0;
-         const CAR_SIZE = 40;
-         //Moving Vars
-         const LEFT_KEY = 37;
-         const RIGHT_KEY = 39;
-         const UP_KEY = 38;
-         const DOWN_KEY = 40;
-         var leftKeyPressed = false;
-         var rightKeyPressed = false;
-         var upKeyPressed = false;
-         var downKeyPressed = false;
-         var startingPos = true;
+<body>
+    <canvas id="gameCanvas" width="400" height="500"></canvas>
+    <script>
+        var canvas, canvasContext;
+        window.onload = function() {
+            canvas = document.getElementById('gameCanvas');
+            canvasContext = canvas.getContext('2d');
+            document.addEventListener('keydown', keyPressed)
+            document.addEventListener('keyup', keyReleased)
+            setInterval(mainloop, 1000 / 50);
+        }
+        //Player Vars
+        var playerXpos = 0;
+        var playerYpos = 0;
+        var playerXspeed = 3;
+        var playerYspeed = 3;
+        const PLAYER_SIZE = 40;
+        var userName = ' ';
+        //var userName = ' ';
+        //Car Vars
+        var carXpos = 0;
+        var carYpos = 80;
+        var carXspeed = 2;
+        var carYspeed = 0;
+        const CAR_SIZE = 40;
+        //Moving Vars
+        const LEFT_KEY = 37;
+        const RIGHT_KEY = 39;
+        const UP_KEY = 38;
+        const DOWN_KEY = 40;
+        var leftKeyPressed = false;
+        var rightKeyPressed = false;
+        var upKeyPressed = false;
+        var downKeyPressed = false;
+        var startingPos = true;
+        var score = 1;
+        var totalCars = 60;
+        var cars = [];
+        var difficulty = prompt('What difficulty do you want?', 'easy or hard');
+        var pass = false;
+        if (difficulty !== 'easy' && difficulty !== 'hard') {
+            while (pass == false) {
+                difficulty = prompt('What difficulty do you want?', 'easy or hard');
+                if (difficulty == 'easy' || difficulty == 'hard') {
+                    pass = true;
+                }
+            }
+        }
 
-         var score = 0;
-         var totalCars = 50;
-         var cars = [];
+        function mainloop() {
+            colorRect(0, 0, canvas.width, canvas.height, 'black');
+            drawImg(frog, playerXpos, playerYpos, PLAYER_SIZE, PLAYER_SIZE, 'pink');
+            if (startingPos) {
+                for (i = 0; i < totalCars; i++) {
+                    startPos();
+                    makeCar();
+                }
+                startingPos = false;
+            }
+            drawCar()
+            playerMove();
+            carMove();
+            drawScore();
+        }
+
+        function startPos() {
+            playerXpos = ((canvas.width / 2) - (PLAYER_SIZE / 2));
+            playerYpos = (canvas.height - PLAYER_SIZE * 2);
+            //Starting Position
+        }
+        //
+
+        function carMove() {
+            cars.forEach(function(car) {
+                var carPos = Math.floor(Math.random() * 3) + 1;
+                car.carYpos = carPos * (canvas.height / 3);
+                car.carXpos += car.carXspeed;
+                //Collision Mechanics
+                if (playerXpos + PLAYER_SIZE > car.carXpos && playerXpos < car.carXpos + car.CAR_SIZE && playerYpos + PLAYER_SIZE > car.carYpos && playerYpos < car.carYpos + car.CAR_SIZE) {
+                    console.log('hit');
+                    playerXpos = ((canvas.width / 2) - (PLAYER_SIZE / 2));
+                    playerYpos = (canvas.height - PLAYER_SIZE * 2);
+                }
+                if (car.carXpos > canvas.width) {
+                    car.carXpos = 0 - CAR_SIZE;
+                }
+            });
+        }
+        // carMove function ends here.
+
+        function drawScore() {
+            canvasContext.font = "20px Arial";
+            canvasContext.fillStyle = "white";
+            canvasContext.fillText("Level: " + score, 8, 20);
+        }
+        // drawScore function ends here.
+
+        function keyPressed(evt) {
+            if (evt.keyCode == LEFT_KEY) {
+                leftKeyPressed = true;
+            }
+            if (evt.keyCode == RIGHT_KEY) {
+                rightKeyPressed = true;
+            }
+            if (evt.keyCode == UP_KEY) {
+                upKeyPressed = true;
+            }
+            if (evt.keyCode == DOWN_KEY) {
+                downKeyPressed = true;
+            }
+        }
+
+        function keyReleased(evt) {
+            if (evt.keyCode == LEFT_KEY) {
+                leftKeyPressed = false;
+            }
+            if (evt.keyCode == RIGHT_KEY) {
+                rightKeyPressed = false;
+            }
+            if (evt.keyCode == UP_KEY) {
+                upKeyPressed = false;
+            }
+            if (evt.keyCode == DOWN_KEY) {
+                downKeyPressed = false;
+            }
+        }
+
+        function playerMove() {
+            if (rightKeyPressed && playerXpos < canvas.width - PLAYER_SIZE) {
+                playerXpos += playerXspeed; //X move right
+            }
+            if (leftKeyPressed && playerXpos > 0) {
+                playerXpos -= playerXspeed; //X move left
+            }
+            if (upKeyPressed && playerYpos > 0) {
+                playerYpos -= playerYspeed; //y move up
+            }
+            if (downKeyPressed && playerYpos < canvas.height - PLAYER_SIZE) {
+                playerYpos += playerYspeed; //y move down
+            }
+            if (playerYpos <= 0) {
+                playerYpos = canvas.height + PLAYER_SIZE * 2;
+                playerXpos = (canvas.width / 2) - (PLAYER_SIZE / 2)
+                score++;
+            }
+        }
+
+        function makeCar() {
+            var carPos = Math.floor(Math.random() * 3) + 1;
+            const CAR_SIZE = 40;
+            var carXpos = 0 - CAR_SIZE;
+            var carYpos = carPos * (canvas.height / 3);
+            var carXspeed = Math.floor(Math.random() * (6 - 2) + 2);
+            var carYspeed = 0;
+            var car = {
+                carXpos: carXpos,
+                carYpos: carYpos,
+                CAR_SIZE: CAR_SIZE,
+                carXspeed: carXspeed,
+                carYspeed: carYspeed
+            }
+            cars.push(car);
+        }
+
+        function drawCar() {
+            cars.forEach(function(car, i) {
+                drawImg(carImg, car.carXpos, car.carYpos, car.CAR_SIZE, car.CAR_SIZE, 'orange');
+            });
+        }
+
+        var carImg = new Image ();
+        var frog = new Image();
+        frog.src = 'image/frogger.png';
+        carImg.src = 'image/car.png'
+        
 
 
+        function drawImg(src, x, y, w, h) {
+            canvasContext.drawImage(src, x, y, w, h);
+        }
 
-         var difficulty = prompt('What difficulty do you want? easy or hard?', 'easy');
-         var pass = false;
-         if (difficulty != 'easy' || difficulty != 'hard') {
-             while (pass == false) {
-                 difficulty = prompt('What difficulty do you want? easy or hard?', 'easy');
-                 if (difficulty == 'easy' || difficulty == 'hard') {
-                     pass = true;
-                 }
-             }
-         }
+        function colorRect(x, y, w, h, c) {
+            canvasContext.fillStyle = c;
+            canvasContext.fillRect(x, y, w, h); //background
+        }
+        //18:27 on video
 
-
-
-
-         function mainloop() {
-             colorRect(0, 0, canvas.width, canvas.height, 'black');
-             colorRect(playerXpos, playerYpos, PLAYER_SIZE, PLAYER_SIZE, 'pink');
-
-
-             if (startingPos) {
-                 for (i = 0; i < totalCars; i++) {
-                     startPos();
-                     makeCar();
-
-                 }
-                 startingPos = false;
-             }
-             drawCar()
-             playerMove();
-             carMove();
-         }
-
-             function startPos() {
-                 playerXpos = ((canvas.width / 2) - (PLAYER_SIZE / 2));
-                 playerYpos = (canvas.height - PLAYER_SIZE * 2);
-                 //Starting Position
-             }
-
-             function carMove() {
-                 cars.forEach(function(car) {
-                     
-                     var carPos = Math.floor(Math.random() * 3) + 1;
-                     car.carYpos = carPos * (canvas.height / 3);
-
-                     car.carXpos += car.carXspeed;
-                     //Collision Mechanics
-                     if (playerXpos + PLAYER_SIZE > car.carXpos && playerXpos < car.carXpos + car.CAR_SIZE && playerYpos + PLAYER_SIZE > car.carYpos && playerYpos < car.carYpos + car.CAR_SIZE) {
-                         console.log('hit');
-                         playerXpos = ((canvas.width / 2) - (PLAYER_SIZE / 2));
-                         playerYpos = (canvas.height - PLAYER_SIZE * 2);
-
-                     }
-                 });
-
-                 //}
-             }
-
-             function keyPressed(evt) {
-                 if (evt.keyCode == LEFT_KEY) {
-                     leftKeyPressed = true;
-                 }
-                 if (evt.keyCode == RIGHT_KEY) {
-                     rightKeyPressed = true;
-                 }
-                 if (evt.keyCode == UP_KEY) {
-                     upKeyPressed = true;
-                 }
-                 if (evt.keyCode == DOWN_KEY) {
-                     downKeyPressed = true;
-                 }
-             }
-
-             function keyReleased(evt) {
-                 if (evt.keyCode == LEFT_KEY) {
-                     leftKeyPressed = false;
-                 }
-                 if (evt.keyCode == RIGHT_KEY) {
-                     rightKeyPressed = false;
-                 }
-                 if (evt.keyCode == UP_KEY) {
-                     upKeyPressed = false;
-                 }
-                 if (evt.keyCode == DOWN_KEY) {
-                     downKeyPressed = false;
-                 }
-             }
-
-             function playerMove() {
-                 if (rightKeyPressed && playerXpos < canvas.width - PLAYER_SIZE) {
-                     playerXpos += playerXspeed; //X move right
-                 }
-                 if (leftKeyPressed && playerXpos > 0) {
-                     playerXpos -= playerXspeed; //X move left
-                 }
-                 if (upKeyPressed && playerYpos > 0) {
-                     playerYpos -= playerYspeed; //y move up
-                 }
-                 if (downKeyPressed && playerYpos < canvas.height - PLAYER_SIZE) {
-                     playerYpos += playerYspeed; //y move down
-                 }
-             }
-
-
-
-
-             function makeCar() {
-                 var carPos = Math.floor(Math.random() * 3) + 1;
-
-                 const CAR_SIZE = 40;
-                 var carXpos = 0 - CAR_SIZE;
-                 var carYpos = carPos * (canvas.height / 3);
-                 var carXspeed = Math.floor(Math.random() * (4 - 2) + 4);
-                 var carYspeed = 0;
-
-                 var car = {
-                     carXpos: carXpos,
-                     carYpos: carYpos,
-                     CAR_SIZE: CAR_SIZE,
-                     carXspeed: carXspeed,
-                     carYspeed: carYspeed
-                 }
-                 cars.push(car);
-             }
-
-             function drawCar() {
-                 cars.forEach(function(car, i) {
-                     colorRect(car.carXpos, car.carYpos, car.CAR_SIZE, car.CAR_SIZE, 'orange');
-                 });
-
-             }
-
-             function colorRect(x, y, w, h, c) {
-                 canvasContext.fillStyle = c;
-                 canvasContext.fillRect(x, y, w, h); //background
-             }
-         
-
-     </script>
- </body>
-//18:27 on video
+    </script>
+</body>

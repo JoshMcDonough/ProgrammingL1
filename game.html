@@ -5,7 +5,7 @@
 </head>
 
 <body>
-    <canvas id="gameCanvas" width="400" height="500"></canvas>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
     <script>
         var canvas, canvasContext;
         window.onload = function() {
@@ -20,8 +20,6 @@
         var playerYpos = 0;
         var playerXspeed = 3;
         var playerYspeed = 3;
-        var playerXspeed = 5;
-        var playerYspeed = 5;
         const PLAYER_SIZE = 30;
         var userName = ' ';
         //var userName = ' ';
@@ -30,7 +28,7 @@
         var carYpos = 80;
         var carXspeed = 2;
         var carYspeed = 0;
-        const CAR_SIZE = 40;
+        const CAR_SIZE = 30;
         //Moving Vars
         const LEFT_KEY = 37;
         const RIGHT_KEY = 39;
@@ -41,35 +39,64 @@
         var upKeyPressed = false;
         var downKeyPressed = false;
         var startingPos = true;
-        var score = 0;
-        var totalCars = 8;
+        var gameRun = true;
+
+        //Lives and level numbers
+        var level = 1;
+        var totalCars = 40;
+
+        var carStart = true;
+
         var cars = [];
 
-        var difficulty = prompt('What difficulty do you want? easy or hard?', 'easy');
+        var name = '';
+        while (name == '' || name == null) {
+            name = prompt('What is your name?') || ''; //Name prompt for player's name
+        }
+
+        var difficulty = prompt('What difficulty do you want?', 'easy or hard');
         var pass = false;
         if (difficulty !== 'easy' && difficulty !== 'hard') {
             while (pass == false) {
-                difficulty = prompt('What difficulty do you want? easy or hard?', 'easy');
+                difficulty = prompt('What difficulty do you want?', 'easy or hard');
                 if (difficulty == 'easy' || difficulty == 'hard') {
                     pass = true;
+                    difficulty.toLowerCase();
+                    console.log(difficulty); // choose difficulty question at start of the game
                 }
             }
         }
 
+        if (difficulty == 'easy') { // if Player chooses easy gives him 5 lives.
+            lives = 5;
+        }
+
+        if (difficulty == 'medium') { // if Player chooses medium gives him 3 lives.
+            lives = 3;
+        }
+
+        if (difficulty == 'hard') { // if Player chooses hard gives him 1 lives.
+            lives = 1;
+        }
+
+
         function mainloop() {
-            colorRect(0, 0, canvas.width, canvas.height, 'black');
-            colorRect(playerXpos, playerYpos, PLAYER_SIZE, PLAYER_SIZE, 'pink');
-            if (startingPos) {
-                for (i = 0; i < totalCars; i++) {
-                    startPos();
-                    makeCar();
+            if (gameRun == true) {
+                colorRect(0, 0, canvas.width, canvas.height, 'black');
+                drawImg(frog, playerXpos, playerYpos, PLAYER_SIZE, PLAYER_SIZE, 'pink');
+
+                if (startingPos) {
+                    for (i = 0; i < totalCars; i++) {
+                        startPos();
+                        makeCar();
+                    }
+                    startingPos = false;
                 }
-                startingPos = false;
+                drawCar()
+                playerMove();
+                carMove();
+                drawScore();
             }
-            drawCar()
-            playerMove();
-            carMove();
-            drawScore();
         }
 
         function startPos() {
@@ -77,33 +104,48 @@
             playerYpos = (canvas.height - PLAYER_SIZE * 2);
             //Starting Position
         }
-
+        // startPos function ends.
         function carMove() {
             cars.forEach(function(car) {
-
                 var carPos = Math.floor(Math.random() * 3) + 1;
                 car.carYpos = carPos * (canvas.height / 3);
                 car.carXpos += car.carXspeed;
                 //Collision Mechanics
-                if (playerXpos + PLAYER_SIZE > car.carXpos && playerXpos < car.carXpos + car.CAR_SIZE && playerYpos + PLAYER_SIZE > car.carYpos && playerYpos < car.carYpos + car.CAR_SIZE) {
+                if (playerXpos + PLAYER_SIZE > car.carXpos && playerXpos < car.carXpos + car.CAR_SIZE &&
+                    playerYpos + PLAYER_SIZE > car.carYpos && playerYpos < car.carYpos + car.CAR_SIZE) {
                     console.log('hit');
                     playerXpos = ((canvas.width / 2) - (PLAYER_SIZE / 2));
                     playerYpos = (canvas.height - PLAYER_SIZE * 2);
+                    lives--;
+                    if (lives < 1) {
+                        gameRun = false; // take away a life when hit by a car
+                    }
+                    if (carStart) {
+                        lanePos = Math.floor(Math.random() * 5 + 0);
+                        carYpos = grassSpace + laneHeight * lanePos;
+                        carStart = false;
+                    }
+
+                    if (carXpos > canvas.width) {
+                        carXpos = 0 - CAR_SIZE;
+                        carStart = true;
+                    }
                 }
                 if (car.carXpos > canvas.width) {
                     car.carXpos = 0 - CAR_SIZE;
                 }
-            });
-            //}
-        }
+            })
+        };
 
+
+        // carMove function ends here.
         function drawScore() {
-//            score += 1;
             canvasContext.font = "20px Arial";
             canvasContext.fillStyle = "white";
-            canvasContext.fillText("Score: " + score, 8, 20);
+            canvasContext.fillText("Level: " + level, 310, 20);
+            canvasContext.fillText('Lives: ' + lives, 8, 20); // lives
         }
-
+        // drawScore function ends here.
         function keyPressed(evt) {
             if (evt.keyCode == LEFT_KEY) {
                 leftKeyPressed = true;
@@ -150,17 +192,27 @@
             if (playerYpos <= 0) {
                 playerYpos = canvas.height + PLAYER_SIZE * 2;
                 playerXpos = (canvas.width / 2) - (PLAYER_SIZE / 2)
-                score++;
+                level++;
             }
         }
 
         function makeCar() {
             var carPos = Math.floor(Math.random() * 3) + 1;
-            const CAR_SIZE = 40;
+            const CAR_SIZE = 60;
             var carXpos = 0 - CAR_SIZE;
             var carYpos = carPos * (canvas.height / 3);
             var carXspeed = Math.floor(Math.random() * (6 - 2) + 2);
             var carYspeed = 0;
+
+            var lanePos = 0;
+            var laneHeight = 102;
+            var grassSpace = 117;
+
+            if (carStart) {
+                lanePos = Math.floor(Math.random() * 5 + 0);
+                carYpos = grassSpace + laneHeight * lanePos; // Random car positions
+            }
+
             var car = {
                 carXpos: carXpos,
                 carYpos: carYpos,
@@ -173,8 +225,16 @@
 
         function drawCar() {
             cars.forEach(function(car, i) {
-                colorRect(car.carXpos, car.carYpos, car.CAR_SIZE, car.CAR_SIZE, 'orange');
+                drawImg(carImg, car.carXpos, car.carYpos, car.CAR_SIZE, car.CAR_SIZE, 'orange');
             });
+        }
+        var carImg = new Image();
+        var frog = new Image();
+        frog.src = 'image/frogger.png';
+        carImg.src = 'image/carImage.png'
+
+        function drawImg(src, x, y, w, h) {
+            canvasContext.drawImage(src, x, y, w, h);
         }
 
         function colorRect(x, y, w, h, c) {

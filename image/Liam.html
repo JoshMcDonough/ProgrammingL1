@@ -1,0 +1,331 @@
+<!doctype.html>
+<html>
+
+<head>
+    <title>Game Project</title>
+</head>
+
+<body>
+    <canvas id="gameProject" width="600" height="900"></canvas> 
+    <script>
+        var canvas, canvasContext, imgAssests;
+        var lives = 5;
+        var level = 1;
+
+        var name = '';
+        while (name == '' || name == null) {
+            name = prompt('What is your name?') || ''; // what is your name prompt at start of the game
+        }
+
+        var difficulty = '';
+
+        while (difficulty != 'easy' && difficulty != 'medium' && difficulty != 'hard') {
+            difficulty = prompt('Choose Difficulty: Easy, Medium or Hard') || '';
+            difficulty.toLowerCase();
+            console.log(difficulty); // choose difficulty question at start of the game
+        }
+
+        if (difficulty == 'easy') { // if player choose easy lives set at 5
+            lives = 5;
+        }
+
+        if (difficulty == 'medium') { // if player choose medium lives set at 4
+            lives = 4;
+        }
+
+        if (difficulty == 'hard') { // if player choose hard lives set at 3
+            lives = 3;
+        }
+        
+        
+        
+        if (playerYpos == 800) {
+            level = 2;
+        }
+
+
+
+
+        window.onload = function() {
+            canvas = document.getElementById('gameProject');
+            canvasContext = canvas.getContext('2d');
+            imgAssets = loadImgAssets('Images/pm.png'); // player image
+
+            document.addEventListener('keydown', keyPressed); //keyPressed = made function 
+            document.addEventListener('keyup', keyReleased); //keyReleased = made function 
+
+            for (i = 0; i < totalCars; i++) {
+                cars.push(makeCars());
+            }
+
+            setInterval(mainLoop, 1000 / 50);
+
+        }
+
+        /* player info */
+        var playerXpos = 0;
+        var playerYpos = 0;
+        var playerXspeed = 4;
+        var playerYspeed = 2;
+        const PLAYER_SIZE = 50;
+
+        /* player moving */
+        const LEFT_ARROW_KEY = 37;
+        const RIGHT_ARROW_KEY = 39;
+        const UP_ARROW_KEY = 38;
+        const DOWN_ARROW_KEY = 40;
+
+        var leftArrowPressed = false;
+        var rightArrowPressed = false;
+        var upArrowPressed = false;
+        var downArrowPressed = false;
+
+        var starting = true;
+
+
+
+        var gameRun = true;
+
+        /* car info */
+        //        var carXpos = 0;
+        //        var carYpos = 0;
+        //        var carXspeed = 20;
+        //        var carYspeed = 1;
+        //        const CAR_SIZE = 100;
+        //        const CAR_WIDTH = 10;
+        //        const CAR_HEIGHT = 10;
+
+        var totalCars = 8; // total cars
+        var cars = [];
+
+        function mainLoop() {
+            if (gameRun) {
+
+                colorRect(0, 0, canvas.width, canvas.height, 'black'); // background
+                drawingImages(img.bg, 0, 0, 600, 900);
+                drawingImages(img.player, playerXpos, playerYpos, PLAYER_SIZE, PLAYER_SIZE);
+                //            colorRect(0, 0, 30, 30, 'red'); //car
+                textRender('Lives: ' + lives, 'black', 15, 25, '20px Arial'); // lives
+                textRender('Level: ' + level, 'black', 520, 25, '20px Arial'); //level
+
+
+
+
+                if (starting) {
+                    startPos();
+
+                }
+                starting = false;
+
+
+                playerMove();
+                drawCars();
+                moveCars();
+                //            carMove();
+
+            } else {
+                colorRect(0, 0, canvas.width, canvas.height, 'black'); // background
+                textRender('Game Over ' + name + ' :/', 'red', 15, 50, '50px Arial'); // game over message
+                textRender('You Reached Level: ' + level, 'red', 15, 100, '50px Arial'); // level reached
+                textRender('Press Ctrl + R to Restart', 'red', 15, 150, '50px Arial'); // restart game
+            }
+
+        }
+
+
+        function keyPressed(evt) {
+            if (evt.keyCode == LEFT_ARROW_KEY) {
+                leftArrowPressed = true;
+            }
+            if (evt.keyCode == RIGHT_ARROW_KEY) {
+                rightArrowPressed = true;
+            }
+            if (evt.keyCode == UP_ARROW_KEY) {
+                upArrowPressed = true;
+            }
+            if (evt.keyCode == DOWN_ARROW_KEY) {
+                downArrowPressed = true; // getting arrows keys to move player
+            }
+        }
+
+        function keyReleased(evt) {
+
+            if (evt.keyCode == LEFT_ARROW_KEY) {
+                leftArrowPressed = false;
+            }
+            if (evt.keyCode == RIGHT_ARROW_KEY) {
+                rightArrowPressed = false;
+            }
+            if (evt.keyCode == UP_ARROW_KEY) {
+                upArrowPressed = false;
+            }
+            if (evt.keyCode == DOWN_ARROW_KEY) {
+                downArrowPressed = false; // using arrow keys to move the player
+            }
+        }
+
+        function playerMove() {
+            if (playerYpos < 0) {
+                playerYpos = canvas.height - PLAYER_SIZE
+                level++; // if touching edge of the screen level up
+            }
+            //     if (leftArrowPressed) {
+            //         playerXpos -= playerXspeed;
+            //     }
+            //     if (rightArrowPressed) {
+            //         playerXpos += playerXspeed;
+            //     }
+            //     if (upArrowPressed) {
+            //         playerYpos -= playerXspeed;
+            //     }
+            if (downArrowPressed) {
+                playerYpos += playerXspeed; // getting player to move all directions
+            }
+
+           if (downArrowPressed && playerXpos < canvas.height - PLAYER_SIZE) {
+                playerXpos += playerXspeed;
+            }
+            
+            if (upArrowPressed && playerYpos > 0) {
+                playerYpos -= playerXspeed;
+            }
+
+            if (rightArrowPressed && playerXpos < canvas.width - PLAYER_SIZE) {
+                playerXpos += playerXspeed;
+            }
+
+            if (leftArrowPressed && playerXpos > 0) {
+                playerXpos -= playerXspeed; // getting to stop when touching edge of the map
+            }
+
+            //            if (playerYpos + PLAYER_SIZE > carYpos && playerYpos < carYpos + CAR_SIZE && playerXpos + PLAYER_SIZE > carXpos && playerXpos < carXpos + CAR_SIZE) {
+            //                playerYpos = 0;
+            //            }
+        }
+
+        //        function carMove() {
+        //            var lanePos = 0;
+        //            var laneHeight = 72;
+        //            var grassSpace = 87;
+        //
+        //            carXpos += carXspeed;
+        //
+        //            if (carXpos > canvas.width) {
+        //                carXpos = 0 - CAR_WIDTH;
+        //                lanePos = Math.floor(Math.random() * 5);
+        //                if (lanePos == 0) {
+        //                    carYpos = canvas.height * 0.18
+        //                }
+        //                if (lanePos == 1) {
+        //                    carYpos = canvas.height * 0.41
+        //                }
+        //                if (lanePos == 2) {
+        //                    carYpos = canvas.height * 0.50
+        //                }
+        //                if (lanePos == 3) {
+        //                    carYpos = canvas.height * 0.69
+        //                }
+        //                if (lanePos == 4) {
+        //                    carYpos = canvas.height * 0.79
+        //                }
+        //            }
+        //        } // end of car move func
+
+        function drawCars() {
+            cars.forEach(function(car, index) {
+                colorRect(car.carXpos, car.carYpos, car.CAR_SIZE, car.CAR_SIZE, car.color);
+                console.log('drawing')
+            });
+        }
+
+        function moveCars() {
+            cars.forEach(function(car, index) {
+                car.carXpos += car.carXspeed;
+                if (car.carXpos > canvas.width) {
+                    car.carXpos = 0 - car.CAR_SIZE;
+                    car.carXspeed = Math.floor(Math.random() * (15 - 3) + 3); // car AI
+                }
+                if (playerYpos + PLAYER_SIZE > car.carYpos && playerYpos <
+                    car.carYpos + car.CAR_SIZE && playerXpos + PLAYER_SIZE > car.carXpos && playerXpos <
+                    car.carXpos + car.CAR_SIZE) {
+                    playerYpos = 0;
+                    starting = true;
+                    lives--;
+                    if (lives < 1) {
+                        gameRun = false; // take away a life when hit by a car
+                    }
+                }
+
+
+            });
+        }
+
+        function makeCars() {
+            var lanePos = Math.floor(Math.random() * 5)
+            const CAR_SIZE = 20;
+            var carXpos = 0 //- CAR_SIZE;
+            var carYpos = 0;
+            var carXspeed = Math.floor(Math.random() * (15 - 3) + 3);
+            var color = 'red'
+            if (lanePos == 0) {
+                carYpos = canvas.height * 0.18
+            }
+            if (lanePos == 1) {
+                carYpos = canvas.height * 0.41
+            }
+            if (lanePos == 2) {
+                carYpos = canvas.height * 0.50
+            }
+            if (lanePos == 3) {
+                carYpos = canvas.height * 0.69
+            }
+            if (lanePos == 4) {
+                carYpos = canvas.height * 0.79 // getting cars in the centre of the lane
+            }
+
+            var randCars = {
+                carXpos: carXpos,
+                carYpos: carYpos,
+                CAR_SIZE: CAR_SIZE,
+                CAR_SIZE: CAR_SIZE,
+                carXspeed: carXspeed,
+                color: color
+            }
+            return randCars;
+        }
+
+        function startPos() {
+            playerXpos = canvas.width / 2 - PLAYER_SIZE / 2;
+            playerYpos = canvas.height - PLAYER_SIZE; // player starting position
+        }
+
+
+        function colorRect(x, y, w, h, color) {
+            canvasContext.fillStyle = color;
+            canvasContext.fillRect(x, y, w, h);
+        }
+
+        function textRender(text, c, x, y, font) {
+            canvasContext.font = font;
+            canvasContext.fillStyle = c;
+            canvasContext.fillText(text, x, y);
+        }
+
+        function loadImgAssets() {
+            img = {};
+            img.bg = new Image();
+            img.bg.src = 'Images/gamebackground.jpg'; // background image
+            img.player = new Image();
+            img.player.src = 'Images/pm.png'; // playermodel image
+
+            return img;
+        }
+
+        function drawingImages(image, dx, dy, dWidth, dHeight) {
+            canvasContext.drawImage(image, dx, dy, dWidth, dHeight)
+        }
+
+    </script>
+</body>
+
+</html>

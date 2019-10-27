@@ -39,6 +39,7 @@
         var upKeyPressed = false;
         var downKeyPressed = false;
         var startingPos = true;
+
         var gameRun = true;
 
         //Lives and level numbers
@@ -54,12 +55,12 @@
             name = prompt('What is your name?') || ''; //Name prompt for player's name
         }
 
-        var difficulty = prompt('What difficulty do you want?', 'easy or hard');
+        var difficulty = prompt('What difficulty do you want?', 'easy, medium or hard');
         var pass = false;
-        if (difficulty !== 'easy' && difficulty !== 'hard') {
+        if (difficulty !== 'easy' && difficulty !== 'medium' && difficulty !== 'hard') {
             while (pass == false) {
                 difficulty = prompt('What difficulty do you want?', 'easy or hard');
-                if (difficulty == 'easy' || difficulty == 'hard') {
+                if (difficulty == 'easy' || difficulty == 'medium' || difficulty == 'hard') {
                     pass = true;
                     difficulty.toLowerCase();
                     console.log(difficulty); // choose difficulty question at start of the game
@@ -82,8 +83,10 @@
 
         function mainloop() {
             if (gameRun == true) {
-                colorRect(0, 0, canvas.width, canvas.height, 'black');
-                drawImg(frog, playerXpos, playerYpos, PLAYER_SIZE, PLAYER_SIZE, 'pink');
+                drawImg(bg, 0, 0, canvas.width, canvas.height);
+                drawImg(frog, playerXpos, playerYpos, PLAYER_SIZE, PLAYER_SIZE);
+                textRender('Lives: ' + lives, 'white', 5, 25, '20px Arial'); //Lives visual text
+                textRender('Level: ' + level, 'white', canvas.width - 90, 25, '20px Arial'); //Level visual text
 
                 if (startingPos) {
                     for (i = 0; i < totalCars; i++) {
@@ -95,9 +98,14 @@
                 drawCar()
                 playerMove();
                 carMove();
-                drawScore();
+                //                textRender();
+            } else {
+                colorRect(0, 0, canvas.width, canvas.height, 'black'); // background
+                textRender('Game Over ' + name + ' You Reached Level: ' + level, 'white', 35, 50, '20 px Arial'); //Game over message when lives are equal to 0
+                textRender('Press Ctrl + R to Play Again', 'white', 75, 100, '20px Arial') // instructions to play again
             }
         }
+
 
         function startPos() {
             playerXpos = ((canvas.width / 2) - (PLAYER_SIZE / 2));
@@ -106,6 +114,11 @@
         }
         // startPos function ends.
         function carMove() {
+
+            var grassSpace = 117;
+            var lanePos = 0;
+            var laneHeight = 102;
+
             cars.forEach(function(car) {
                 var carPos = Math.floor(Math.random() * 3) + 1;
                 car.carYpos = carPos * (canvas.height / 3);
@@ -126,8 +139,8 @@
                         carStart = false;
                     }
 
-                    if (carXpos > canvas.width) {
-                        carXpos = 0 - CAR_SIZE;
+                    if (car.carXpos > canvas.width) {
+                        car.carXpos = 0 - car.CAR_SIZE;
                         carStart = true;
                     }
                 }
@@ -139,13 +152,7 @@
 
 
         // carMove function ends here.
-        function drawScore() {
-            canvasContext.font = "20px Arial";
-            canvasContext.fillStyle = "white";
-            canvasContext.fillText("Level: " + level, 310, 20);
-            canvasContext.fillText('Lives: ' + lives, 8, 20); // lives
-        }
-        // drawScore function ends here.
+
         function keyPressed(evt) {
             if (evt.keyCode == LEFT_KEY) {
                 leftKeyPressed = true;
@@ -190,7 +197,7 @@
                 playerYpos += playerYspeed; //y move down
             }
             if (playerYpos <= 0) {
-                playerYpos = canvas.height + PLAYER_SIZE * 2;
+                playerYpos = (canvas.height - PLAYER_SIZE * 2);
                 playerXpos = (canvas.width / 2) - (PLAYER_SIZE / 2)
                 level++;
             }
@@ -225,21 +232,35 @@
 
         function drawCar() {
             cars.forEach(function(car, i) {
-                drawImg(carImg, car.carXpos, car.carYpos, car.CAR_SIZE, car.CAR_SIZE, 'orange');
+                drawImg(carImg, car.carXpos, car.carYpos, car.CAR_SIZE, car.CAR_SIZE);
             });
         }
         var carImg = new Image();
         var frog = new Image();
+        var bg = new Image();
+        bg.src = 'Image/bg.png';
         frog.src = 'image/frogger.png';
-        carImg.src = 'image/carImage.png'
+        carImg.src = 'image/carImage.png';
 
         function drawImg(src, x, y, w, h) {
             canvasContext.drawImage(src, x, y, w, h);
         }
 
-        function colorRect(x, y, w, h, c) {
+        function textRender(text, c, x, y, font) {
+            canvasContext.font = font;
             canvasContext.fillStyle = c;
-            canvasContext.fillRect(x, y, w, h); //background
+            canvasContext.fillText(text, x, y);
+        }
+
+        function drawImg(src, x, y, w, h) {
+            //            canvasContext.fillStyle = c;
+            //            canvasContext.fillRect(x, y, w, h); //background
+            canvasContext.drawImage(src, x, y, w, h)
+        }
+
+        function colorRect(x, y, w, h, color) {
+            canvasContext.fillStyle = color;
+            canvasContext.fillRect(x, y, w, h);
         }
         //18:27 on video
 

@@ -50,7 +50,7 @@
         var level = 1;
         var lives = 0;
 
-        var gameRun = true;
+        var gameRun = true; // this is for running game and game over
         var carStart = true;
 
         // Amount of cars in game
@@ -88,7 +88,8 @@
         }
 
 
-        function mainLoop() {
+        function mainLoop() { // runs 60times per second basic runs game 
+
             if (gameRun == true) {
                 drawImg(bg, 0, 0, canvas.width, canvas.height);
                 drawImg(frog, playerXpos, playerYpos, PLAYER_SIZE, PLAYER_SIZE);

@@ -18,8 +18,8 @@
         //Player Vars
         var playerXpos = 0;
         var playerYpos = 0;
-        var playerXspeed = 3;
-        var playerYspeed = 3;
+        var playerXspeed = 5;
+        var playerYspeed = 5;
         const PLAYER_SIZE = 30;
         var userName = ' ';
 
@@ -76,15 +76,18 @@
         }
 
         if (difficulty == 'easy') { // if Player chooses easy gives him 5 lives.
-            lives = 5;
+            minSpeed = 1;
+            maxSpeed = 6;
         }
 
         if (difficulty == 'medium') { // if Player chooses medium gives him 3 lives.
-            lives = 3;
+            minSpeed = 3;
+            maxSpeed = 8;
         }
 
         if (difficulty == 'hard') { // if Player chooses hard gives him 1 lives.
-            lives = 1;
+            minSpeed = 5;
+            maxSpeed = 11;
         }
 
 
@@ -105,7 +108,6 @@
                 drawCar()
                 playerMove();
                 carMove();
-                //                textRender();
             } else {
                 colorRect(0, 0, canvas.width, canvas.height, 'black'); // background
                 textRender('Game Over ' + name + ' You Reached Level: ' + level, 'white', 35, 50, '20 px Arial'); //Game over message when lives are equal to 0
@@ -130,12 +132,13 @@
                 var carPos = Math.floor(Math.random() * 3) + 1;
                 car.carYpos = carPos * (canvas.height / 3);
                 car.carXpos += car.carXspeed;
+
                 //Collision Mechanics
                 if (playerXpos + PLAYER_SIZE > car.carXpos && playerXpos < car.carXpos + car.CAR_SIZE &&
                     playerYpos + PLAYER_SIZE > car.carYpos && playerYpos < car.carYpos + car.CAR_SIZE) {
                     console.log('hit');
                     playerXpos = ((canvas.width / 2) - (PLAYER_SIZE / 2));
-                    playerYpos = (canvas.height - PLAYER_SIZE * 2);
+                    playerYpos = (canvas.height - PLAYER_SIZE);
                     lives--;
                     if (lives < 1) {
                         gameRun = false; // take away a life when hit by a car
@@ -204,7 +207,7 @@
                 playerYpos += playerYspeed; //y move down
             }
             if (playerYpos <= 0) {
-                playerYpos = (canvas.height - PLAYER_SIZE * 2);
+                playerYpos = (canvas.height - PLAYER_SIZE);
                 playerXpos = (canvas.width / 2) - (PLAYER_SIZE / 2)
                 level++;
             }
@@ -216,7 +219,7 @@
             const CAR_SIZE = 60;
             var carXpos = 0 - CAR_SIZE;
             var carYpos = carPos * (canvas.height / 3);
-            var carXspeed = Math.floor(Math.random() * (6 - 2) + 2);
+            var carXspeed = Math.floor(Math.random() * (maxSpeed - minSpeed) + minSpeed);
             var carYspeed = 0;
 
             var lanePos = 0;

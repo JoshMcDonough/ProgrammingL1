@@ -51,7 +51,6 @@
         var lives = 0;
 
         var gameRun = true; // this is for running game and game over
-        var carStart = true;
 
         // Amount of cars in game
         var cars = [];
@@ -67,7 +66,8 @@
         if (difficulty !== 'easy' && difficulty !== 'medium' && difficulty !== 'hard') {
             while (pass == false) {
                 difficulty = prompt('What difficulty do you want?', 'easy, medium or hard');
-                if (difficulty == 'easy' || difficulty == 'medium' || difficulty == 'hard') { // If answer not a difficulty
+                if (difficulty == 'easy' || difficulty == 'medium' || difficulty == 'hard') {
+                    // If answer not a difficulty prompts again
                     pass = true;
                     difficulty.toLowerCase();
                     console.log(difficulty); // choose difficulty question at start of the game
@@ -91,8 +91,8 @@
         function mainLoop() { // runs 60times per second basic runs game 
 
             if (gameRun == true) {
-                drawImg(bg, 0, 0, canvas.width, canvas.height);
-                drawImg(frog, playerXpos, playerYpos, PLAYER_SIZE, PLAYER_SIZE);
+                drawImg(bg, 0, 0, canvas.width, canvas.height); // Game background
+                drawImg(frog, playerXpos, playerYpos, PLAYER_SIZE, PLAYER_SIZE); // Frog image, position and size
                 textRender('Lives: ' + lives, 'white', 5, 25, '20px Arial'); //Lives visual text
                 textRender('Level: ' + level, 'white', canvas.width - 90, 25, '20px Arial'); //Level visual text
 
@@ -107,7 +107,7 @@
                 playerMove();
                 carMove();
             } else {
-                colorRect(0, 0, canvas.width, canvas.height, 'black'); // background
+                colorRect(0, 0, canvas.width, canvas.height, 'black'); //  Game Over background
                 textRender('Game Over ' + name + ' You Reached Level: ' + level, 'white', 35, 50, '20 px Arial'); //Game over message when lives are equal to 0
                 textRender('Press Ctrl + R to Play Again', 'white', 75, 100, '20px Arial') // instructions to play again
             }
@@ -117,15 +117,10 @@
         function startPos() {
             playerXpos = ((canvas.width / 2) - (PLAYER_SIZE / 2));
             playerYpos = (canvas.height - PLAYER_SIZE * 2);
-            //Starting Position
+            //Starting Position for player
         }
         // startPos function ends here.
         function carMove() {
-
-            var grassSpace = 150;
-            var lanePos = 0;
-            var laneHeight = 100;
-
             cars.forEach(function(car) {
                 var carPos = Math.floor(Math.random() * 3) + .65;
                 car.carYpos = carPos * (canvas.height / 4);
@@ -137,19 +132,13 @@
                     console.log('hit');
                     playerXpos = ((canvas.width / 2) - (PLAYER_SIZE / 2));
                     playerYpos = (canvas.height - PLAYER_SIZE);
-                    lives--;
+                    lives--; // if player collides with car from array take away 1 life and spawn at bottom
                     if (lives < 1) {
-                        gameRun = false; // take away a life when hit by a car
-                    }
-                    if (carStart) {
-                        lanePos = Math.floor(Math.random() * 5 + 0);
-                        carYpos = grassSpace + laneHeight * lanePos;
-                        carStart = false;
+                        gameRun = false; // take away a life when hit by a car from array
                     }
 
                     if (car.carXpos > canvas.width) {
                         car.carXpos = 0 - car.CAR_SIZE;
-                        carStart = true;
                     }
                 }
                 if (car.carXpos > canvas.width) {
@@ -172,6 +161,7 @@
             if (evt.keyCode == DOWN_KEY) {
                 downKeyPressed = true;
             }
+            // Arrow key pressed down function
         }
         // keyPressed function ends here.
 
@@ -188,26 +178,31 @@
             if (evt.keyCode == DOWN_KEY) {
                 downKeyPressed = false;
             }
+            // Arrow key released function
         }
         // keyReleased function ends here.
 
         function playerMove() {
             if (rightKeyPressed && playerXpos < canvas.width - PLAYER_SIZE) {
-                playerXpos += playerXspeed; //X move right
+                playerXpos += playerXspeed;
+                //X move right & if player wider than canvas width prevent from moving with the right key till he moves left
             }
             if (leftKeyPressed && playerXpos > 0) {
-                playerXpos -= playerXspeed; //X move left
+                playerXpos -= playerXspeed;
+                //X move left & if player smaller than 0 width prevent from moving with the left key till he moves right
             }
             if (upKeyPressed && playerYpos > 0) {
-                playerYpos -= playerYspeed; //y move up
+                playerYpos -= playerYspeed; //y move up 
             }
             if (downKeyPressed && playerYpos < canvas.height - PLAYER_SIZE) {
-                playerYpos += playerYspeed; //y move down
+                playerYpos += playerYspeed;
+                //y move down & prevent player from moving down when right at bottom of screen
             }
             if (playerYpos <= 0) {
                 playerYpos = (canvas.height - PLAYER_SIZE);
                 playerXpos = (canvas.width / 2) - (PLAYER_SIZE / 2)
                 level++;
+                // When player is touching top edge of screen level up and spawn at the bottom of the screen
             }
         }
         //playerMove function ends here.
@@ -217,17 +212,8 @@
             const CAR_SIZE = 60;
             var carXpos = 0 - CAR_SIZE;
             var carYpos = carPos * (canvas.height / 3);
-            var carXspeed = Math.floor(Math.random() * (maxSpeed - minSpeed) + minSpeed);
+            var carXspeed = Math.floor(Math.random() * (maxSpeed - minSpeed) + minSpeed); // Car speed
             var carYspeed = 0;
-
-            var lanePos = 0;
-            var laneHeight = 102;
-            var grassSpace = 117;
-
-            if (carStart) {
-                lanePos = Math.floor(Math.random() * 5 + 0);
-                carYpos = grassSpace + laneHeight * lanePos; // Random car positions
-            }
 
             var car = {
                 carXpos: carXpos,
@@ -252,11 +238,12 @@
         var bg = new Image();
         bg.src = 'Image/bg.png';
         frog.src = 'image/frogger.png';
-        carImg.src = 'image/carImage.png';
+        carImg.src = 'image/carImage.png'; // Images for character, obstacles and background.
 
         function drawImg(src, x, y, w, h) {
             canvasContext.drawImage(src, x, y, w, h);
         }
+        // Draw Images on canvas function
         // drawImg function ends here.
 
         function textRender(text, c, x, y, font) {
@@ -264,12 +251,14 @@
             canvasContext.fillStyle = c;
             canvasContext.fillText(text, x, y);
         }
+        // drawText on canvas function
         // textRender function ends here.
 
         function colorRect(x, y, w, h, color) {
             canvasContext.fillStyle = color;
             canvasContext.fillRect(x, y, w, h);
         }
+        // draw color rectangles func
         // colorRect function ends here.
 
     </script>

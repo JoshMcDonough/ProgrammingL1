@@ -13,7 +13,7 @@
             canvasContext = canvas.getContext('2d');
             document.addEventListener('keydown', keyPressed)
             document.addEventListener('keyup', keyReleased)
-            setInterval(mainloop, 1000 / 50);
+            setInterval(mainLoop, 1000 / 50);
         }
         //Player Vars
         var playerXpos = 0;
@@ -22,33 +22,40 @@
         var playerYspeed = 3;
         const PLAYER_SIZE = 30;
         var userName = ' ';
-        //var userName = ' ';
+
         //Car Vars
         var carXpos = 0;
         var carYpos = 80;
+        var minSpeed = 0;
+        var maxSpeed = 0;
         var carXspeed = 2;
         var carYspeed = 0;
         const CAR_SIZE = 30;
+
         //Moving Vars
         const LEFT_KEY = 37;
         const RIGHT_KEY = 39;
         const UP_KEY = 38;
         const DOWN_KEY = 40;
+
         var leftKeyPressed = false;
         var rightKeyPressed = false;
         var upKeyPressed = false;
         var downKeyPressed = false;
         var startingPos = true;
 
-        var gameRun = true;
+
 
         //Lives and level numbers
         var level = 1;
-        var totalCars = 40;
+        var lives = 5;
 
+        var gameRun = true;
         var carStart = true;
 
+        // Amount of cars in game
         var cars = [];
+        var totalCars = 40;
 
         var name = '';
         while (name == '' || name == null) {
@@ -59,8 +66,8 @@
         var pass = false;
         if (difficulty !== 'easy' && difficulty !== 'medium' && difficulty !== 'hard') {
             while (pass == false) {
-                difficulty = prompt('What difficulty do you want?', 'easy or hard');
-                if (difficulty == 'easy' || difficulty == 'medium' || difficulty == 'hard') {
+                difficulty = prompt('What difficulty do you want?', 'easy, medium or hard');
+                if (difficulty == 'easy' || difficulty == 'medium' || difficulty == 'hard') { // If answer not a difficulty
                     pass = true;
                     difficulty.toLowerCase();
                     console.log(difficulty); // choose difficulty question at start of the game
@@ -81,7 +88,7 @@
         }
 
 
-        function mainloop() {
+        function mainLoop() {
             if (gameRun == true) {
                 drawImg(bg, 0, 0, canvas.width, canvas.height);
                 drawImg(frog, playerXpos, playerYpos, PLAYER_SIZE, PLAYER_SIZE);
@@ -105,14 +112,14 @@
                 textRender('Press Ctrl + R to Play Again', 'white', 75, 100, '20px Arial') // instructions to play again
             }
         }
-
+        // mainLoop function ends here.
 
         function startPos() {
             playerXpos = ((canvas.width / 2) - (PLAYER_SIZE / 2));
             playerYpos = (canvas.height - PLAYER_SIZE * 2);
             //Starting Position
         }
-        // startPos function ends.
+        // startPos function ends here.
         function carMove() {
 
             var grassSpace = 117;
@@ -149,8 +156,6 @@
                 }
             })
         };
-
-
         // carMove function ends here.
 
         function keyPressed(evt) {
@@ -167,6 +172,7 @@
                 downKeyPressed = true;
             }
         }
+        // keyPressed function ends here.
 
         function keyReleased(evt) {
             if (evt.keyCode == LEFT_KEY) {
@@ -182,6 +188,7 @@
                 downKeyPressed = false;
             }
         }
+        // keyReleased function ends here.
 
         function playerMove() {
             if (rightKeyPressed && playerXpos < canvas.width - PLAYER_SIZE) {
@@ -202,6 +209,7 @@
                 level++;
             }
         }
+        //playerMove function ends here.
 
         function makeCar() {
             var carPos = Math.floor(Math.random() * 3) + 1;
@@ -229,12 +237,15 @@
             }
             cars.push(car);
         }
+        // makeCar function ends here.
 
         function drawCar() {
             cars.forEach(function(car, i) {
                 drawImg(carImg, car.carXpos, car.carYpos, car.CAR_SIZE, car.CAR_SIZE);
             });
         }
+        // drawCar function ends here.
+
         var carImg = new Image();
         var frog = new Image();
         var bg = new Image();
@@ -245,24 +256,20 @@
         function drawImg(src, x, y, w, h) {
             canvasContext.drawImage(src, x, y, w, h);
         }
+        // drawImg function ends here.
 
         function textRender(text, c, x, y, font) {
             canvasContext.font = font;
             canvasContext.fillStyle = c;
             canvasContext.fillText(text, x, y);
         }
-
-        function drawImg(src, x, y, w, h) {
-            //            canvasContext.fillStyle = c;
-            //            canvasContext.fillRect(x, y, w, h); //background
-            canvasContext.drawImage(src, x, y, w, h)
-        }
+        // textRender function ends here.
 
         function colorRect(x, y, w, h, color) {
             canvasContext.fillStyle = color;
             canvasContext.fillRect(x, y, w, h);
         }
-        //18:27 on video
+        // colorRect function ends here.
 
     </script>
 </body>
